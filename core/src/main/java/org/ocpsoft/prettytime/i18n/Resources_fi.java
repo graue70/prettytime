@@ -252,6 +252,19 @@ public class Resources_fi extends ListResourceBundle implements TimeFormatProvid
          return result;
       }
 
+      @Override
+      public String decorateUnrounded(Duration duration, String time)
+      {
+         String result = "";
+         if (duration.getUnit() instanceof Day && Math.abs(duration.getQuantity()) == 1) {
+            result = time;
+         }
+         else {
+            result = super.decorateUnrounded(duration, time);
+         }
+         return result;
+      }
+
       private String getUnitName(TimeUnit unit)
       {
          return unit.getClass().getSimpleName();

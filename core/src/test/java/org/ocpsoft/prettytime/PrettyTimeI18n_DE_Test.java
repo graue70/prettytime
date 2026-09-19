@@ -67,6 +67,16 @@ public class PrettyTimeI18n_DE_Test
     }
 
     @Test
+    public void testGrammaticalCaseMinutesUnrounded()
+    {
+        // regression test for https://github.com/ocpsoft/prettytime/issues/218:
+        // rounding rules must be ignored by formatUnrounded()
+        assertEquals("vor 2 Minuten", prettyTime.format(base.minusSeconds(119)));
+        assertEquals("vor 1 Minute", prettyTime.formatUnrounded(base.minusSeconds(119)));
+        assertEquals("in 1 Minute", prettyTime.formatUnrounded(base.plusSeconds(119)));
+    }
+
+    @Test
     public void testGrammaticalCaseHours()
     {
         assertEquals("vor 5 Stunden", prettyTime.format(base.minus(5, ChronoUnit.HOURS)));

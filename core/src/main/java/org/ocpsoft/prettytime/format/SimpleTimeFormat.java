@@ -75,6 +75,23 @@ public class SimpleTimeFormat implements TimeFormat, LocaleAware<SimpleTimeForma
    @Override
    public String decorate(Duration duration, String time)
    {
+      return doDecorate(duration, time);
+   }
+
+   @Override
+   public String decorateUnrounded(Duration duration, String time)
+   {
+      /*
+       * Decoration itself is rounding-agnostic, but decorateUnrounded() must not dispatch to
+       * decorate(Duration, String): subclasses may override decorate() with rounding-dependent
+       * logic, which would leak rounding rules into the unrounded path.
+       * See https://github.com/ocpsoft/prettytime/issues/218
+       */
+      return doDecorate(duration, time);
+   }
+
+   private String doDecorate(Duration duration, String time)
+   {
       StringBuilder result = new StringBuilder();
       if (duration.isInPast()) {
          result.append(pastPrefix).append(" ").append(time).append(" ").append(pastSuffix);
@@ -83,13 +100,6 @@ public class SimpleTimeFormat implements TimeFormat, LocaleAware<SimpleTimeForma
          result.append(futurePrefix).append(" ").append(time).append(" ").append(futureSuffix);
       }
       return PATTERN_MULTIPLE_WHITESPACES.matcher(result).replaceAll(" ").trim();
-   }
-
-   @Override
-   public String decorateUnrounded(Duration duration, String time)
-   {
-      // This format does not need to know about rounding during decoration.
-      return decorate(duration, time);
    }
 
    private String format(final Duration duration, final boolean round)

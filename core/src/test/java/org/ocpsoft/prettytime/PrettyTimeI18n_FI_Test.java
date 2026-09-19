@@ -222,6 +222,18 @@ public class PrettyTimeI18n_FI_Test
 	}
 
 	@Test
+	public void testDaysAgoSingleUnrounded() throws Exception
+	{
+		// regression test for https://github.com/ocpsoft/prettytime/issues/218:
+		// rounding rules must not leak into the unrounded decoration path
+		int hour = 1000 * 60 * 60;
+		PrettyTime t = new PrettyTime(new Date(hour * 42), locale);
+		assertEquals("eilen", t.formatUnrounded(new Date(0)));
+		assertEquals("huomenna", t.formatUnrounded(new Date(hour * 84)));
+		assertEquals("2 päivää sitten", t.formatUnrounded(new Date(hour * -6)));
+	}
+
+	@Test
 	public void testWeeksFromNow() throws Exception
 	{
 		PrettyTime t = new PrettyTime(new Date(0), locale);
